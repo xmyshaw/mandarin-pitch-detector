@@ -1,0 +1,27 @@
+[project]
+name = "mandarin-pitch-detector"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Mengyuan Xiao",email = "my333x@gmail.com"}
+]
+readme = "README.md"
+requires-python = "==3.12.11"
+dependencies = [
+    "scipy (>=1.16.0,<2.0.0)",
+    "numpy (==1.26.4)",
+    "tensor (>=0.3.6,<0.4.0)",
+    "crepe (>=0.0.16,<0.0.17)",
+    "matplotlib (>=3.10.3,<4.0.0)",
+    "imageio (>=2.37.0,<3.0.0)",
+    "pandas (>=2.3.1,<3.0.0)",
+    "tensorflow (==2.16.1)"
+]
+
+[tool.poetry]
+packages = [{include = "mandarin_pitch_detector", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
