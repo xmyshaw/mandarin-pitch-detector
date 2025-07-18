@@ -1,4 +1,4 @@
-"""Modules for creating visualization plots"""
+"""Modules for creating visualization plots."""
 import matplotlib.pyplot as plt
 import matplotlib.cm
 from imageio import imwrite
@@ -8,9 +8,9 @@ def save_activation_plot(activation: np.ndarray, file: str) -> None:
     """
     Plot activations and save the plot to file.
 
-    Args:
-        activation (np.ndarray): The raw activation matrix
-        file (str): The file name to be saved as
+    Parameters:
+    - activation (np.ndarray): The raw activation matrix
+    - file (str): The file name to be saved as
     
     """
     # Draw the low pitches in the bottom
@@ -23,9 +23,9 @@ def save_audio_plot(audio: np.ndarray, file: str) -> None:
     """
     Plot audio and save the plot to file.
 
-    Args:
-        audio (np.ndarray): The input audio
-        file (str): The file name to be saved as 
+    Parameters:
+    - audio (np.ndarray): The input audio
+    - file (str): The file name to be saved as 
     
     """
     plt.figure()
@@ -36,9 +36,9 @@ def save_frequency_plot(frequency: np.ndarray, file: str) -> None:
     """
     Plot frequency and save the plot to file.
 
-    Args:
-        frequency (np.ndarray): The input audio
-        file (str): The file name to be saved as 
+    Parameters:
+    - frequency (np.ndarray): The input audio
+    - file (str): The file name to be saved as 
     
     """
     plt.figure()
