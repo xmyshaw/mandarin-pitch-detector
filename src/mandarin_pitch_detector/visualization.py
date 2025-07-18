@@ -28,6 +28,7 @@ def save_audio_plot(audio: np.ndarray, file: str) -> None:
         file (str): The file name to be saved as 
     
     """
+    plt.figure()
     plt.plot(audio,'b')
     plt.savefig(file)
 
@@ -40,5 +41,6 @@ def save_frequency_plot(frequency: np.ndarray, file: str) -> None:
         file (str): The file name to be saved as 
     
     """
+    plt.figure()
     plt.plot(frequency,'g')
     plt.savefig(file)
