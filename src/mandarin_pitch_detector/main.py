@@ -8,22 +8,10 @@ import matplotlib.cm
 from imageio import imwrite
 import pandas as pd
 import numpy as np
-
-def write_plot(audio, frequency, activation):
-    # to draw the low pitches in the bottom
-    salience = np.flip(activation, axis=1)
-    inferno = matplotlib.cm.get_cmap('inferno')
-    image = inferno(salience.transpose())
-    imwrite("data/output.png", (255 * image).astype(np.uint8))
-
-    plt.plot(audio,'b')
-    plt.savefig("data/audio.png")
-    plt.show()
-
-    fig2 = plt.figure()
-    plt.plot(frequency,'g')
-    plt.savefig("data/frequency.png")
-    plt.show()
+from mandarin_pitch_detector.visualization import (
+    save_activation_plot,
+    save_audio_plot,
+    save_frequency_plot)
 
 def get_groups_from_ndarray(time: np.ndarray, frequency: np.ndarray, confidence: np.ndarray, threshold_confidence: float, min_duration: float) -> list:
 
@@ -114,8 +102,11 @@ def read_from_csv(file: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 if __name__ == "__main__":
     sr, audio = wavfile.read('data/mandarinTones.wav')
     time, frequency, confidence, activation = crepe.predict(audio, sr, viterbi=True)
+    save_audio_plot(audio, "data/audio.png")
     save_to_csv(time, frequency, confidence, 'data/time_freq_confidence.csv')
-    write_plot(audio, frequency, activation)
+    save_activation_plot(activation, "data/activation.png")
+    save_frequency_plot(frequency, "data/frequency.png")
+    
 
     time, frequency, confidence = read_from_csv('data/time_freq_confidence.csv')
     chunks = get_groups_from_ndarray(time, frequency, confidence, threshold_confidence=0.8, min_duration=0.15)
