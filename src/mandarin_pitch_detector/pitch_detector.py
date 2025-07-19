@@ -1,7 +1,11 @@
 """Modules containing pitch detection functions"""
 import numpy as np
+import logging
+from mandarin_pitch_detector.pitch_model import linear_regression
 
-def get_groups(time: np.ndarray, frequency: np.ndarray, confidence: np.ndarray, threshold_confidence: float, min_duration: float) -> list:
+logger = logging.getLogger(__name__)
+
+def get_groups(time: np.ndarray, frequency: np.ndarray, confidence: np.ndarray, threshold_confidence: float, min_duration: float) -> list | None:
     """
     Plot activations and save the plot to file.
 
@@ -14,7 +18,8 @@ def get_groups(time: np.ndarray, frequency: np.ndarray, confidence: np.ndarray, 
     - file (str): The file name to be saved as
     
     Returns:
-    - list: Groups identified for pitch detection
+    - list | None: List of tuples representing groups identified for pitch detection,
+                    else None
     """
 
     chunks = []
@@ -54,5 +59,12 @@ def get_groups(time: np.ndarray, frequency: np.ndarray, confidence: np.ndarray, 
         print("Time:", t)
         print("Frequency:", f)
         print("Confidence:", c)
+    if len(chunks) > 0:
+        return chunks
+    logger.warning("No voice detected!")
+    return None
 
-    return chunks
+def process_chunks(chunks: list) -> None:
+    for i, (t, f, c) in enumerate(chunks):
+        coef, intercept, score = linear_regression(t, f)
+        print(f"Chunk {i}: Coefficiency {coef}, intercept {intercept}, score {score}")
