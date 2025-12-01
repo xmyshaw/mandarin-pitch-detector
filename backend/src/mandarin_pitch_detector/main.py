@@ -12,7 +12,8 @@ from mandarin_pitch_detector.data_file_access import (
 )
 from mandarin_pitch_detector.pitch_detector import get_groups, process_chunks
 
-if __name__ == "__main__":
+
+def rule_based_pitch_detector():
     sr, audio = wavfile.read('data/mandarinTones.wav')
     time, frequency, confidence, activation = crepe.predict(audio, sr, viterbi=True)
     save_audio_plot(audio, "data/audio.png")
@@ -23,3 +24,4 @@ if __name__ == "__main__":
     time, frequency, confidence = read_from_csv('data/time_freq_confidence.csv')
     chunks = get_groups(time, frequency, confidence, threshold_confidence=0.8, min_duration=0.15)
     process_chunks(chunks)
+

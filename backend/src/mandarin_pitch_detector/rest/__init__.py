@@ -1,0 +1,1 @@
+"""Init file for the package mandarin_pitch_detector.rest."""

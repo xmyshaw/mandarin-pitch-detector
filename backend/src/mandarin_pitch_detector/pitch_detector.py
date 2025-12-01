@@ -1,6 +1,10 @@
 """Modules containing pitch detection functions"""
 import numpy as np
 import logging
+import io
+import base64
+import parselmouth
+import matplotlib.pyplot as plt
 from mandarin_pitch_detector.pitch_model import linear_regression
 
 logger = logging.getLogger(__name__)
@@ -68,3 +72,70 @@ def process_chunks(chunks: list) -> None:
     for i, (t, f, c) in enumerate(chunks):
         coef, intercept, score = linear_regression(t, f)
         print(f"Chunk {i}: Coefficiency {coef}, intercept {intercept}, score {score}")
+
+def praat_pitch_detector(audio_path: str) -> dict:
+    print(audio_path)
+    sound = parselmouth.Sound(audio_path)
+    print("Done")
+    pitch = sound.to_pitch()
+    
+    # Extract pitch values
+    pitch_values = pitch.selected_array['frequency']
+    pitch_values = pitch_values[pitch_values != 0] # Remove unvoiced segments
+
+    if len(pitch_values) < 5:
+        print('Not enough voiced data')
+        raise ValueError('Not enough voiced data')
+
+    # Normalize pitch (semitones relative to mean)
+    mean_pitch = np.mean(pitch_values)
+    semitones = 12 * np.log2(pitch_values / mean_pitch)
+    
+    # Fit linear regression to get slope
+    x = np.arange(len(semitones))
+    slope, intercept = np.polyfit(x, semitones, 1)
+    
+    # Check for dipping (concavity) - simplified
+    # If the middle part is significantly lower than start and end
+    mid_idx = len(semitones) // 2
+    start_val = np.mean(semitones[:len(semitones)//4])
+    end_val = np.mean(semitones[3*len(semitones)//4:])
+    mid_val = np.mean(semitones[mid_idx-len(semitones)//8 : mid_idx+len(semitones)//8])
+    
+    is_dipping = (start_val > mid_val + 0.5) and (end_val > mid_val + 0.5)
+
+    tone = "Unknown"
+    
+    if is_dipping:
+        tone = "Tone 3 (Dipping)"
+    elif slope > 0.05: # Thresholds need tuning
+        tone = "Tone 2 (Rising)"
+    elif slope < -0.05:
+        tone = "Tone 4 (Falling)"
+    else:
+        tone = "Tone 1 (Level)"
+
+    # Generate plot
+    plt.figure(figsize=(10, 4))
+    plt.plot(semitones, label='Pitch Contour (Semitones)')
+    plt.plot(x, slope * x + intercept, 'r--', label=f'Linear Fit (slope={slope:.2f})')
+    plt.title(f'Pitch Analysis: {tone}')
+    plt.xlabel('Time Frame')
+    plt.ylabel('Semitones (relative to mean)')
+    plt.legend()
+    plt.grid(True)
+    
+    # Save plot to base64 string
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    plot_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    plt.close()
+
+    return {
+        'tone': tone,
+        'slope': slope,
+        'is_dipping': bool(is_dipping),
+        'pitch_contour': semitones.tolist(),
+        'plot_image': plot_base64
+    }
