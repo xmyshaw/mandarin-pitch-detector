@@ -5,7 +5,7 @@ description = ""
 authors = [
     {name = "Mengyuan Xiao",email = "my333x@gmail.com"}
 ]
-readme = "README.md"
+readme = "../README.md"
 requires-python = "==3.12.11"
 dependencies = [
     "scipy (>=1.16.0,<2.0.0)",
