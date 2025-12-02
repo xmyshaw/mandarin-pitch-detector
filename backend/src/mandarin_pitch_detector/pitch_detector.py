@@ -74,9 +74,7 @@ def process_chunks(chunks: list) -> None:
         print(f"Chunk {i}: Coefficiency {coef}, intercept {intercept}, score {score}")
 
 def praat_pitch_detector(audio_path: str) -> dict:
-    print(audio_path)
     sound = parselmouth.Sound(audio_path)
-    print("Done")
     pitch = sound.to_pitch()
     
     # Extract pitch values
