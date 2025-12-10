@@ -17,7 +17,7 @@ app.add_middleware(
 )
 
 @app.post("/analyze_tone_praat")
-async def analyze_tone(audio: UploadFile = File(...)):
+async def analyze_tone_praat(audio: UploadFile = File(...)):
     try:
         with tempfile.NamedTemporaryFile(delete=True) as tmp:
             shutil.copyfileobj(audio.file, tmp)
